@@ -97,3 +97,53 @@ New files: `src/README.md` (setup + architecture + endpoint list), `test-strateg
 > "Also the ai-prompt relevant md files that also need updating."
 
 Created missing files: `ai-prompts/testing.md`, `ai-prompts/debugging.md`, `ai-prompts/code-review.md`, `ai-prompts/documentation.md`. Updated `ai-prompts/implementation.md` with Prompts 13–14.
+
+---
+
+## Feature: Frontend Core
+
+**Prompt 15 — Frontend scaffold and all pages**
+> "Start working on the frontend now. I need a ticket list page with search and status filter, a ticket details page showing ticket info and comments, a create ticket page. On the details page add a status dropdown that only shows valid next statuses based on the same transition rules as the backend. Every page must handle loading, empty, and error states."
+
+Output:
+- Vite + React 18 + TypeScript + Tailwind CSS scaffolded in `frontend/`
+- `frontend/src/types/index.ts` — `User`, `Ticket`, `Comment`, enums, `CreateTicketPayload`, `UpdateTicketPayload`, `ApiError`
+- `frontend/src/utils/statusTransitions.ts` — `STATUS_TRANSITIONS` map, `getAllowedTransitions`, `isTerminal` mirroring backend exactly
+- `frontend/src/api/client.ts` — Axios instance with `baseURL: http://localhost:5020/api`
+- `frontend/src/api/tickets.ts`, `comments.ts`, `users.ts` — typed API calls
+- Shared components: `StatusBadge`, `PriorityBadge`, `LoadingSpinner`, `ErrorMessage`, `EmptyState`
+- `TicketListPage` — debounced keyword search + status filter dropdown; loading/empty/error states; links to detail and create
+- `TicketDetailPage` — ticket info, comment thread, add comment form, dynamic status transition buttons (only valid next states)
+- `CreateTicketPage` — form with client + server-side validation, user dropdowns from API
+- React Router v6 routes: `/`, `/tickets/new`, `/tickets/:id`
+- TypeScript build: 0 errors
+
+**Prompt 16 — Frontend structured error display**
+> "Right now when the API rejects an invalid status change the frontend just shows a generic toast. Update it to display the actual error message coming back from the backend so the user knows exactly why the transition failed."
+
+Output:
+- `TransitionError` interface added to `types/index.ts` with `message: string` and `allowed: string[]`
+- `transitionError` state in `TicketDetailPage` changed from `string | null` to `TransitionError | null`
+- `axios.isAxiosError` guard in `catch` block safely extracts `error` and `allowed` from `err.response.data`
+- Error block now renders the message text plus each allowed status as a styled badge
+- Users see e.g. "Cannot transition from 'Closed' to 'Open'. Valid transitions: none — this is a terminal state."
+
+---
+
+## Feature: Unit Tests
+
+**Prompt 17 — Status transition unit tests with mocked service layer**
+> "I need to write integration tests for the status transition logic. First list every possible from→to combination, mark which are valid/invalid. Then write the tests mocking the service layer."
+
+Output:
+- `tests/SupportTickets.Api.Tests/` project created (xUnit 2.9.2 + Moq 4.20.72, net8.0)
+- Added to `src/SupportTickets.sln`
+- `StateMachine/TicketStatusTransitionsTests.cs` — 32 pure tests covering all 25 from→to combinations + `GetAllowed` correctness per state
+- `Controllers/TicketStatusTransitionControllerTests.cs` — 30 controller tests with `Mock<ITicketService>(MockBehavior.Strict)`
+  - All 5 valid transitions → 200 OK with updated ticket
+  - All 20 invalid combinations → 409 Conflict
+  - Structured 409 body verified via reflection (anonymous object)
+  - Terminal states → 409 with empty `allowed` list
+  - Ticket not found → 404 with error body
+  - Service called exactly once per valid request
+- All 62 tests pass, zero warnings

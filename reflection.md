@@ -10,6 +10,8 @@
 
 **On-the-go documentation.** Keeping `api-contract.md`, `implementation-plan.md`, and `ai-prompts/` updated alongside each feature commit made it easy to audit progress and catch gaps.
 
+**Frontend and backend stay in sync.** Mirroring `TicketStatusTransitions.cs` as `statusTransitions.ts` on the frontend meant the UI never offered transitions the API would reject.
+
 ## What could have been better
 
 **Comment blocking on terminal tickets was missed.** The original design required blocking new comments on Closed/Cancelled tickets. This rule was in `requirements-analysis.md` but not caught until the sanity check. It is tracked as a known gap.
@@ -19,6 +21,8 @@
 **`UsersController` was missing.** The API contract documented user endpoints from the start but they weren't implemented until the sanity check before the final merge.
 
 **No auto-migration initially.** Fresh clones would have had no DB until `dotnet ef database update` was run manually. Fixed by adding `db.Database.Migrate()` on startup.
+
+**Port mismatch between backend and frontend.** `launchSettings.json` had the backend on port `5000` but `client.ts` was pointed at `5020`. Frontend showed a permanent loading spinner with no error. Fixed by aligning `launchSettings.json` to port `5020`.
 
 ## Key technical decisions made
 
@@ -30,3 +34,5 @@
 | Enum serialization | `JsonStringEnumConverter` globally | Readable in Swagger and for the frontend |
 | Cycle handling | `ReferenceHandler.IgnoreCycles` | Avoids `[JsonIgnore]` on every nav property |
 | DB | SQLite with EF Core migrations | Zero setup locally, swap connection string for production |
+| Frontend error display | Structured 409 body shown to user | `axios.isAxiosError` guard + typed `TransitionError` interface |
+| Unit test scope | Controller + state machine tested separately | State machine is pure (no mocks); controller tests mock `ITicketService` with `MockBehavior.Strict` |

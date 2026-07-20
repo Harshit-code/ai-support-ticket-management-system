@@ -46,3 +46,19 @@ Fix: added `IUserRepository`, `UserRepository`, and `UsersController` with GET a
 > Fresh clones had no `support_tickets.db` and no instructions to run `dotnet ef database update`.
 
 Fix: added `db.Database.Migrate()` in `Program.cs` inside a scoped service call before the app starts listening.
+
+---
+
+## Frontend Issues
+
+**Issue 4 — PowerShell execution policy blocked npm**
+> `npm run dev` failed with "File npm.ps1 cannot be loaded because running scripts is disabled on this system."
+
+Cause: Windows PowerShell default execution policy is `Restricted` — blocks all `.ps1` scripts including npm.
+Fix: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser` (one-time, persists).
+
+**Issue 5 — Port mismatch: frontend stuck on loading spinner**
+> Frontend at `localhost:5173` showed permanent loading spinner — no error, no data.
+
+Cause: `frontend/src/api/client.ts` had `baseURL: http://localhost:5020/api` but `launchSettings.json` had `applicationUrl: http://localhost:5000`. Every API call silently failed (connection refused), `catch` never fired because Axios was pending.
+Fix: changed `launchSettings.json` `applicationUrl` from `5000` to `5020` to match the frontend config.
