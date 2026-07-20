@@ -9,5 +9,5 @@ public interface ITicketRepository
     Task<Ticket?> GetByIdAsync(int id);
     Task<Ticket> CreateAsync(Ticket ticket);
     Task<Ticket?> UpdateAsync(Ticket ticket);
-    Task<Ticket?> TransitionStatusAsync(int id, TicketStatus newStatus);
+    Task<Ticket?> UpdateStatusAsync(int id, TicketStatus newStatus);
 }

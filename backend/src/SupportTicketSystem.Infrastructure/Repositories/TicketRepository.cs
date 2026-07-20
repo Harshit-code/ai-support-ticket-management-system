@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SupportTicketSystem.Core.Entities;
 using SupportTicketSystem.Core.Enums;
 using SupportTicketSystem.Core.Interfaces;
-using SupportTicketSystem.Core.StateMachine;
 using SupportTicketSystem.Infrastructure.Data;
 
 namespace SupportTicketSystem.Infrastructure.Repositories;
@@ -53,14 +52,10 @@ public class TicketRepository : ITicketRepository
         return existing;
     }
 
-    public async Task<Ticket?> TransitionStatusAsync(int id, TicketStatus newStatus)
+    public async Task<Ticket?> UpdateStatusAsync(int id, TicketStatus newStatus)
     {
         var ticket = await _db.Tickets.FindAsync(id);
         if (ticket is null) return null;
-
-        if (!TicketStatusTransitions.IsValid(ticket.Status, newStatus))
-            throw new InvalidOperationException(
-                $"Transition from {ticket.Status} to {newStatus} is not allowed.");
 
         ticket.Status    = newStatus;
         ticket.UpdatedAt = DateTime.UtcNow;

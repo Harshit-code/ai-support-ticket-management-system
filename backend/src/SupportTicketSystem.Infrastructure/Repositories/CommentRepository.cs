@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SupportTicketSystem.Core.Entities;
 using SupportTicketSystem.Core.Interfaces;
-using SupportTicketSystem.Core.StateMachine;
 using SupportTicketSystem.Infrastructure.Data;
 
 namespace SupportTicketSystem.Infrastructure.Repositories;
@@ -22,13 +21,6 @@ public class CommentRepository : ICommentRepository
 
     public async Task<Comment> CreateAsync(Comment comment)
     {
-        var ticket = await _db.Tickets.FindAsync(comment.TicketId)
-            ?? throw new KeyNotFoundException($"Ticket {comment.TicketId} not found.");
-
-        if (TicketStatusTransitions.IsTerminal(ticket.Status))
-            throw new InvalidOperationException(
-                $"Cannot add a comment to a {ticket.Status} ticket.");
-
         comment.CreatedAt = DateTime.UtcNow;
         _db.Comments.Add(comment);
         await _db.SaveChangesAsync();
