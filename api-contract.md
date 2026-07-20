@@ -42,7 +42,9 @@
 ```json
 { "newStatus": "InProgress" }
 ```
-Returns `400` with `{ "error": "...", "allowed": [...] }` if transition is invalid.
+Returns `409 Conflict` with `{ "error": "...", "from": "...", "to": "...", "allowed": [...] }` if the transition is not permitted.
+Returns `400 Bad Request` if `newStatus` is not a valid enum value.
+Returns `404 Not Found` if the ticket does not exist.
 
 ## Comments
 
