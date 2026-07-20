@@ -66,7 +66,20 @@
 - [x] Controller uses `[FromQuery]` on existing `GET /api/tickets` — no new endpoint added
 - [x] Build verified: 0 errors, 0 warnings
 
-## Phase 7 — (next)
+## Phase 7 — Frontend Core ✅
+- [x] Vite + React 18 + TypeScript + Tailwind CSS scaffolded in `frontend/`
+- [x] Types matching backend entities: `User`, `Ticket`, `Comment`, enums
+- [x] `statusTransitions.ts` — mirrors `TicketStatusTransitions.cs` exactly, single source of truth on frontend
+- [x] API layer: `client.ts` (axios), `tickets.ts`, `comments.ts`, `users.ts`
+- [x] Shared components: `StatusBadge`, `PriorityBadge`, `LoadingSpinner`, `ErrorMessage`, `EmptyState`
+- [x] `TicketListPage` — search (keyword) + status filter, loading/empty/error states, links to detail
+- [x] `TicketDetailPage` — full ticket info, comment thread, add comment form, status transition buttons (only valid next states shown)
+- [x] `CreateTicketPage` — form with client-side + server-side validation, user dropdown from API
+- [x] React Router v6 routing: `/`, `/tickets/new`, `/tickets/:id`
+- [x] CORS already configured on backend for `http://localhost:5173`
+- [x] TypeScript build: 0 errors
+
+## Phase 8 — (next)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI
