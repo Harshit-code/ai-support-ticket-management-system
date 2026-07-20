@@ -20,6 +20,10 @@
 - [x] SQLite connection string in appsettings.json
 - [x] Swagger configured: API info, XML docs, annotations, request duration
 - [x] Build verified: 0 errors, 0 warnings
+- [x] Domain entities: User, Ticket, Comment + enums (UserRole, TicketPriority, TicketStatus)
+- [x] AppDbContext with Fluent API configuration and seed data
+- [x] EF Core migration: `InitialCreate` created and applied to SQLite
+- [x] Seed data: 4 users (1 Admin, 2 Agents, 1 Customer), 3 tickets (Open/InProgress/Resolved), 2 comments
 
 ## Phase 3 — (next)
 - [ ] Domain entities and enums in SupportTickets.Domain
