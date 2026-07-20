@@ -7,9 +7,9 @@ namespace SupportTicketSystem.Api.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
-    private readonly IUserRepository _users;
+    private readonly IUserService _users;
 
-    public UsersController(IUserRepository users) => _users = users;
+    public UsersController(IUserService users) => _users = users;
 
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _users.GetAllAsync());

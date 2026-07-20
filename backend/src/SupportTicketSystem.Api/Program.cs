@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SupportTicketSystem.Core.Interfaces;
+using SupportTicketSystem.Core.Services;
 using SupportTicketSystem.Infrastructure.Data;
 using SupportTicketSystem.Infrastructure.Repositories;
 
@@ -12,9 +13,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+// Repositories — data access only
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// Services — business logic
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>

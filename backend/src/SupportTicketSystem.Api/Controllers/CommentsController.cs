@@ -8,9 +8,9 @@ namespace SupportTicketSystem.Api.Controllers;
 [Route("api/tickets/{ticketId:int}/comments")]
 public class CommentsController : ControllerBase
 {
-    private readonly ICommentRepository _comments;
+    private readonly ICommentService _comments;
 
-    public CommentsController(ICommentRepository comments) => _comments = comments;
+    public CommentsController(ICommentService comments) => _comments = comments;
 
     [HttpGet]
     public async Task<IActionResult> GetByTicket(int ticketId)

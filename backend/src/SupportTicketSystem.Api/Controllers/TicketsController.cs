@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using SupportTicketSystem.Core.Entities;
 using SupportTicketSystem.Core.Enums;
 using SupportTicketSystem.Core.Interfaces;
-using SupportTicketSystem.Core.StateMachine;
 
 namespace SupportTicketSystem.Api.Controllers;
 
@@ -10,9 +9,9 @@ namespace SupportTicketSystem.Api.Controllers;
 [Route("api/[controller]")]
 public class TicketsController : ControllerBase
 {
-    private readonly ITicketRepository _tickets;
+    private readonly ITicketService _tickets;
 
-    public TicketsController(ITicketRepository tickets) => _tickets = tickets;
+    public TicketsController(ITicketService tickets) => _tickets = tickets;
 
     [HttpGet]
     public async Task<IActionResult> GetAll() => Ok(await _tickets.GetAllAsync());
@@ -29,10 +28,10 @@ public class TicketsController : ControllerBase
     {
         var ticket = new Ticket
         {
-            Title       = req.Title,
-            Description = req.Description,
-            Priority    = req.Priority,
-            CreatedById = req.CreatedById,
+            Title        = req.Title,
+            Description  = req.Description,
+            Priority     = req.Priority,
+            CreatedById  = req.CreatedById,
             AssignedToId = req.AssignedToId
         };
 
@@ -66,7 +65,7 @@ public class TicketsController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(new { error = ex.Message, allowed = TicketStatusTransitions.GetAllowed(req.NewStatus) });
+            return BadRequest(new { error = ex.Message });
         }
     }
 }
