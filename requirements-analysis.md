@@ -44,7 +44,7 @@ Cancelled   → (terminal)
 ```
 
 ### Behaviour Rules
-- New comments are blocked on Closed and Cancelled tickets
+- New comments are blocked on Closed and Cancelled tickets ⚠️ *(not yet implemented — tracked as known gap)*
 - `assignedTo` is nullable — tickets can be created unassigned
 - Comments are immutable — no edit, no delete
 - Users are seeded only — no CRUD API for users
