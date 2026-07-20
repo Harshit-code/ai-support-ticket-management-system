@@ -12,3 +12,31 @@ Used to generate the full manual test case list in `test-strategy.md`. AI produc
 
 **Prompt 2 — Test results template**
 Generated `test-results.md` as a blank pass/fail table aligned to test-strategy.md cases. To be filled in manually by running `dotnet run` and executing each case through Swagger UI at `http://localhost:5020/swagger`.
+
+---
+
+## Unit Tests — Status Transition Logic
+
+**Prompt 3 — Transition table then automated tests**
+> "I need to write integration tests for the status transition logic but first list every possible from→to combination in a table and mark which are valid/invalid. Then mocking the service layer."
+
+First produced the full 25-row table (5 valid, 20 invalid). Then created the xUnit + Moq test project.
+
+**State machine tests** (`TicketStatusTransitionsTests`) — 32 tests, no mocks:
+- 5 valid transitions (`IsAllowed` returns true)
+- 5 same-state transitions (false)
+- 3 backward transitions (false)
+- 3 forward skips (false)
+- 1 Resolved→Cancelled edge case (false)
+- 10 transitions from terminal states Closed/Cancelled (always false)
+- `GetAllowed` correctness: Open→{InProgress,Cancelled}, InProgress→{Resolved,Cancelled}, Resolved→{Closed}, Closed→{}, Cancelled→{}
+
+**Controller tests** (`TicketStatusTransitionControllerTests`) — 30 tests, `ITicketService` mocked:
+- Valid transitions → 200 OK
+- Invalid transitions → 409 Conflict (all 20 cases)
+- Structured error body verified (reflection on anonymous object)
+- Terminal state → 409 with empty `allowed`
+- Not found → 404
+- Service called exactly once
+
+All 62 tests pass, zero warnings. Run with: `dotnet test tests/SupportTickets.Api.Tests`

@@ -6,10 +6,7 @@
 - [x] State machine: TicketStatusTransitions (static, Core layer)
 - [x] Repository interfaces: IUserRepository, ITicketRepository, ICommentRepository
 - [x] EF Core DbContext with Fluent API configuration
-- [x] Seed data: 5 users (1 Admin, 2 Agents, 2 Customers)
-- [x] Repository implementations
-- [x] API controllers: Users, Tickets, Comments
-- [x] Program.cs wiring (DI, CORS, Swagger, auto-migrate)
+- [x] Seed data: 4 users (1 Admin, 2 Agents, 1 Customer), 3 tickets (Open/InProgress/Resolved), 2 comments
 
 ## Phase 2 — .NET Solution Scaffold ✅
 - [x] New solution: `src/SupportTickets.sln`
@@ -43,14 +40,14 @@
 - [x] `TicketService.TransitionStatusAsync` — reads current status, checks map, throws `InvalidTransitionException` on violation
 - [x] `TicketRepository.UpdateStatusAsync` — writes status + UpdatedAt only, zero logic
 - [x] `PatchTicketStatusRequest` DTO with `[EnumDataType]` validation
-- [x] `PATCH /api/tickets/{id}/status` — catches `InvalidTransitionException` and returns 400 with `error`, `from`, `to`, `allowed`
+- [x] `PATCH /api/tickets/{id}/status` — catches `InvalidTransitionException` and returns **409 Conflict** with `error`, `from`, `to`, `allowed`
 - [x] Build verified: 0 errors, 0 warnings
 
 ## Phase 5 — Comment Endpoints ✅
 - [x] `ICommentRepository` + `ICommentService` interfaces (Domain/Interfaces)
 - [x] `CommentService` (Domain/Services) — validates ticket exists via `ITicketRepository`, throws `KeyNotFoundException` if not
 - [x] `CommentRepository` (Infrastructure/Repositories) — sets `CreatedAt`, orders by `CreatedAt` ascending on reads
-- [x] `CreateCommentRequest` DTO — message required + non-empty (`[Required]`, `[MinLength(1)]`, `[MaxLength(5000)]`)
+- [x] `CreateCommentRequest` DTO — message required + non-empty (`[Required]`, `[MinLength(1)]`, `[MaxLength(1000)]`)
 - [x] `CommentsController` — `GET /api/tickets/{ticketId}/comments`, `POST /api/tickets/{ticketId}/comments`
 - [x] `KeyNotFoundException` caught in controller → 404 (not 500)
 - [x] Message trimmed before save to prevent whitespace-only comments slipping through
@@ -66,8 +63,26 @@
 - [x] Controller uses `[FromQuery]` on existing `GET /api/tickets` — no new endpoint added
 - [x] Build verified: 0 errors, 0 warnings
 
-## Phase 7 — (next)
-- [ ] Frontend ticket list and detail views
-- [ ] Status transition UI
-- [ ] Comment thread UI
-- [ ] Tests
+## Phase 7 — Frontend Core ✅
+- [x] Vite + React 18 + TypeScript + Tailwind CSS scaffolded in `frontend/`
+- [x] Types matching backend entities: `User`, `Ticket`, `Comment`, enums
+- [x] `statusTransitions.ts` — mirrors `TicketStatusTransitions.cs` exactly, single source of truth on frontend
+- [x] API layer: `client.ts` (axios), `tickets.ts`, `comments.ts`, `users.ts`
+- [x] Shared components: `StatusBadge`, `PriorityBadge`, `LoadingSpinner`, `ErrorMessage`, `EmptyState`
+- [x] `TicketListPage` — search (keyword) + status filter, loading/empty/error states, links to detail
+- [x] `TicketDetailPage` — full ticket info, comment thread, add comment form, status transition buttons (only valid next states shown)
+- [x] `CreateTicketPage` — form with client-side + server-side validation, user dropdown from API
+- [x] React Router v6 routing: `/`, `/tickets/new`, `/tickets/:id`
+- [x] CORS already configured on backend for `http://localhost:5173`
+- [x] TypeScript build: 0 errors
+
+## Phase 8 — Frontend Error Display + Unit Tests ✅
+- [x] `TicketDetailPage` — structured 409 error display: shows `error` message + `allowed` transitions as badges
+- [x] `axios.isAxiosError` guard used to safely extract `error` and `allowed` from response body
+- [x] `TransitionError` interface added to `frontend/src/types/index.ts`
+- [x] `launchSettings.json` port corrected from `5000` → `5020` to match frontend `client.ts` baseURL
+- [x] `tests/SupportTickets.Api.Tests` project created (xUnit + Moq, net8.0)
+- [x] `TicketStatusTransitionsTests` — 32 pure unit tests covering all 25 from→to combinations + `GetAllowed` per state
+- [x] `TicketStatusTransitionControllerTests` — 30 controller tests with `ITicketService` mocked (`MockBehavior.Strict`)
+- [x] All 62 tests pass, zero warnings
+- [x] Test project added to `src/SupportTickets.sln`
