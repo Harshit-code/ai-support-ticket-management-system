@@ -9,13 +9,13 @@
 
 ## Tickets
 
-| Method | Route | Description |
-|---|---|---|
-| GET | /api/tickets | List all tickets (includes createdBy, assignedTo) |
-| GET | /api/tickets/{id} | Get ticket with comments |
-| POST | /api/tickets | Create ticket |
-| PUT | /api/tickets/{id} | Update title, description, priority, assignedTo |
-| PATCH | /api/tickets/{id}/status | Transition status (state machine enforced) |
+| Method | Route | Status | Description |
+|---|---|---|---|
+| GET | /api/tickets | ✅ | List all tickets (includes createdBy, assignedTo) |
+| GET | /api/tickets/{id} | ✅ | Get ticket with comments |
+| POST | /api/tickets | ✅ | Create ticket |
+| PUT | /api/tickets/{id} | ✅ | Update title, description, priority, assignedTo |
+| PATCH | /api/tickets/{id}/status | 🔜 | Transition status (state machine enforced) |
 
 ### POST /api/tickets — Request
 ```json

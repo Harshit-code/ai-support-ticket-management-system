@@ -1,15 +1,31 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using SupportTickets.Domain.Interfaces;
+using SupportTickets.Domain.Services;
 using SupportTickets.Infrastructure.Data;
+using SupportTickets.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+    {
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        o.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Repositories
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+
+// Services
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -28,6 +44,7 @@ builder.Services.AddSwaggerGen(options =>
         options.IncludeXmlComments(xmlPath);
 
     options.EnableAnnotations();
+    options.UseInlineDefinitionsForEnums();
 });
 
 var app = builder.Build();

@@ -25,15 +25,23 @@
 - [x] EF Core migration: `InitialCreate` created and applied to SQLite
 - [x] Seed data: 4 users (1 Admin, 2 Agents, 1 Customer), 3 tickets (Open/InProgress/Resolved), 2 comments
 
-## Phase 3 — (next)
-- [ ] Domain entities and enums in SupportTickets.Domain
-- [ ] EF Core DbContext + seed data in SupportTickets.Infrastructure
-- [ ] EF Core initial migration
-- [ ] Service layer + repository pattern
-- [ ] API controllers
-- [ ] React frontend scaffold
+## Phase 3 — Ticket API Endpoints ✅
+- [x] `ITicketRepository` + `ITicketService` interfaces (Domain/Interfaces)
+- [x] `TicketService` implementation (Domain/Services) — business logic owner
+- [x] `TicketRepository` implementation (Infrastructure/Repositories) — pure data access
+- [x] `CreateTicketRequest` + `UpdateTicketRequest` DTOs with DataAnnotations validation
+- [x] `TicketsController` — GET all, GET by id, POST, PUT (status excluded from PUT)
+- [x] `[ApiController]` automatic 400 with field-specific errors on validation failure
+- [x] `JsonStringEnumConverter` + `ReferenceHandler.IgnoreCycles` added globally
+- [x] DI registered in Program.cs
+- [x] Build verified: 0 errors, 0 warnings
 
-## Phase 4 — (future)
+## Phase 4 — (next)
+- [ ] PATCH /api/tickets/{id}/status — status transition endpoint (state machine enforced)
+- [ ] Comments API endpoints
+- [ ] Users API endpoints
+
+## Phase 5 — (future)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI
