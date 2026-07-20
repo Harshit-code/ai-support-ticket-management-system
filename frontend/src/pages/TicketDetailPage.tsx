@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
 import { getTicketById, patchTicketStatus } from '../api/tickets';
 import { createComment } from '../api/comments';
 import type { Ticket, TicketStatus, Comment } from '../types';
@@ -15,6 +16,11 @@ const STATUS_LABELS: Record<TicketStatus, string> = {
   Closed: 'Closed', Cancelled: 'Cancelled',
 };
 
+interface TransitionError {
+  message: string;
+  allowed: string[];
+}
+
 export default function TicketDetailPage() {
   const { id } = useParams<{ id: string }>();
   const ticketId = Number(id);
@@ -23,7 +29,7 @@ export default function TicketDetailPage() {
   const [loading, setLoading]         = useState(true);
   const [error, setError]             = useState<string | null>(null);
   const [transitioning, setTransitioning] = useState(false);
-  const [transitionError, setTransitionError] = useState<string | null>(null);
+  const [transitionError, setTransitionError] = useState<TransitionError | null>(null);
 
   const [commentText, setCommentText] = useState('');
   const [commentUserId, setCommentUserId] = useState<number>(1);
@@ -53,9 +59,16 @@ export default function TicketDetailPage() {
     try {
       const res = await patchTicketStatus(ticket.id, newStatus);
       setTicket(res.data);
-    } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      setTransitionError(msg ?? 'Failed to update status.');
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const data = err.response.data as { error?: string; allowed?: string[] };
+        setTransitionError({
+          message: data.error ?? 'Transition failed.',
+          allowed: data.allowed ?? [],
+        });
+      } else {
+        setTransitionError({ message: 'Failed to update status. Please try again.', allowed: [] });
+      }
     } finally {
       setTransitioning(false);
     }
@@ -136,7 +149,21 @@ export default function TicketDetailPage() {
               ))}
             </div>
           )}
-          {transitionError && <p className="text-red-600 text-sm mt-2">{transitionError}</p>}
+          {transitionError && (
+            <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg space-y-2">
+              <p className="text-sm text-red-700 font-medium">{transitionError.message}</p>
+              {transitionError.allowed.length > 0 && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs text-red-500">Valid transitions:</span>
+                  {transitionError.allowed.map(s => (
+                    <span key={s} className="text-xs px-2 py-0.5 bg-white border border-red-200 rounded text-red-600 font-medium">
+                      {STATUS_LABELS[s as TicketStatus] ?? s}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
