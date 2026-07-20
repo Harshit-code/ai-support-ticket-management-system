@@ -9,13 +9,13 @@
 
 ## Tickets
 
-| Method | Route | Description |
-|---|---|---|
-| GET | /api/tickets | List all tickets (includes createdBy, assignedTo) |
-| GET | /api/tickets/{id} | Get ticket with comments |
-| POST | /api/tickets | Create ticket |
-| PUT | /api/tickets/{id} | Update title, description, priority, assignedTo |
-| PATCH | /api/tickets/{id}/status | Transition status (state machine enforced) |
+| Method | Route | Status | Description |
+|---|---|---|---|
+| GET | /api/tickets | ✅ | List all tickets (includes createdBy, assignedTo) |
+| GET | /api/tickets/{id} | ✅ | Get ticket with comments |
+| POST | /api/tickets | ✅ | Create ticket |
+| PUT | /api/tickets/{id} | ✅ | Update title, description, priority, assignedTo |
+| PATCH | /api/tickets/{id}/status | ✅ | Transition status (state machine enforced via InvalidTransitionException) |
 
 ### POST /api/tickets — Request
 ```json
@@ -42,7 +42,9 @@
 ```json
 { "newStatus": "InProgress" }
 ```
-Returns `400` with `{ "error": "...", "allowed": [...] }` if transition is invalid.
+Returns `409 Conflict` with `{ "error": "...", "from": "...", "to": "...", "allowed": [...] }` if the transition is not permitted.
+Returns `400 Bad Request` if `newStatus` is not a valid enum value.
+Returns `404 Not Found` if the ticket does not exist.
 
 ## Comments
 
