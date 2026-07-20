@@ -18,7 +18,16 @@ public class CommentsController : ControllerBase
     /// <summary>Get all comments for a ticket ordered oldest first.</summary>
     [HttpGet]
     public async Task<IActionResult> GetByTicketId(int ticketId)
-        => Ok(await _comments.GetByTicketIdAsync(ticketId));
+    {
+        try
+        {
+            return Ok(await _comments.GetByTicketIdAsync(ticketId));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { error = $"Ticket {ticketId} not found." });
+        }
+    }
 
     /// <summary>Add a comment to a ticket. Returns 404 if the ticket does not exist.</summary>
     [HttpPost]

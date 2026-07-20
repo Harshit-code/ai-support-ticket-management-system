@@ -14,8 +14,13 @@ public class CommentService : ICommentService
         _tickets  = tickets;
     }
 
-    public Task<IEnumerable<Comment>> GetByTicketIdAsync(int ticketId)
-        => _comments.GetByTicketIdAsync(ticketId);
+    public async Task<IEnumerable<Comment>> GetByTicketIdAsync(int ticketId)
+    {
+        var ticket = await _tickets.GetByIdAsync(ticketId)
+            ?? throw new KeyNotFoundException($"Ticket {ticketId} not found.");
+
+        return await _comments.GetByTicketIdAsync(ticket.Id);
+    }
 
     public async Task<Comment> AddAsync(int ticketId, Comment comment)
     {

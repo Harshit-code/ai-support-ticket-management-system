@@ -6,7 +6,7 @@ public class CreateCommentRequest
 {
     [Required(ErrorMessage = "Message is required.")]
     [MinLength(1, ErrorMessage = "Message cannot be empty.")]
-    [MaxLength(5000, ErrorMessage = "Message cannot exceed 5000 characters.")]
+    [MaxLength(1000, ErrorMessage = "Message cannot exceed 1000 characters.")]
     public string Message { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "CreatedById is required.")]
