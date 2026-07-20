@@ -11,13 +11,25 @@
 - [x] API controllers: Users, Tickets, Comments
 - [x] Program.cs wiring (DI, CORS, Swagger, auto-migrate)
 
-## Phase 2 — (next)
+## Phase 2 — .NET Solution Scaffold ✅
+- [x] New solution: `src/SupportTickets.sln`
+- [x] `SupportTickets.Api` — Web API project (net8.0)
+- [x] `SupportTickets.Domain` — class library for entities and enums
+- [x] `SupportTickets.Infrastructure` — class library for EF Core, DbContext, migrations, seed
+- [x] Project references wired: Api → Domain + Infrastructure, Infrastructure → Domain
+- [x] SQLite connection string in appsettings.json
+- [x] Swagger configured: API info, XML docs, annotations, request duration
+- [x] Build verified: 0 errors, 0 warnings
+
+## Phase 3 — (next)
+- [ ] Domain entities and enums in SupportTickets.Domain
+- [ ] EF Core DbContext + seed data in SupportTickets.Infrastructure
 - [ ] EF Core initial migration
-- [ ] API validation (FluentValidation or DataAnnotations)
-- [ ] Error handling middleware
+- [ ] Service layer + repository pattern
+- [ ] API controllers
 - [ ] React frontend scaffold
 
-## Phase 3 — (future)
+## Phase 4 — (future)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI

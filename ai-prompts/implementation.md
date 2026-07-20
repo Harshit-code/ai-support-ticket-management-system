@@ -12,3 +12,10 @@ Used to identify gap around Resolved→InProgress and comment behaviour on termi
 
 **Prompt 3 — Implementation**
 > Full core domain model implemented: enums, entities, TicketStatusTransitions, interfaces, DbContext with seeding, repositories, controllers.
+
+**Prompt 4 — Solution scaffold**
+> "Scaffold the .NET solution inside the src folder — SupportTickets.Api, SupportTickets.Domain, SupportTickets.Infrastructure. Wire project references, use SQLite, verify dotnet build."
+
+**Prompt 5 — Swagger setup**
+> "Setup Swagger for testing the APIs."
+> Configured AddSwaggerGen with API info, XML docs, Swashbuckle.Annotations, request duration display.

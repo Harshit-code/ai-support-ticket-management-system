@@ -1,4 +1,4 @@
-# Design Notes
+## Design Notes
 
 ## Architecture
 
@@ -6,6 +6,17 @@
 - **Core** — entities, enums, interfaces, state machine logic. No external dependencies.
 - **Infrastructure** — EF Core DbContext, repository implementations, seed data.
 - **Api** — ASP.NET Core controllers, DI wiring, Swagger.
+
+## Solution Structure (active — inside `src/`)
+```
+src/
+├── SupportTickets.sln
+├── SupportTickets.Api/          ← Web API, thin controllers, Swagger, DI wiring
+├── SupportTickets.Domain/       ← Entities, enums, interfaces, state machine (no deps)
+└── SupportTickets.Infrastructure/ ← EF Core DbContext, repositories, seed data
+```
+
+> Note: `backend/` folder contains earlier exploratory work with different naming (`SupportTicketSystem.*`). The active implementation is under `src/` with the `SupportTickets.*` namespace.
 
 ## Key Design Decisions
 

@@ -7,7 +7,31 @@
 - DB file location: `backend/src/SupportTicketSystem.Api/support_tickets.db`
 - DB file is gitignored
 
-## Running Migrations
+## Running the API locally
+
+```bash
+cd src/SupportTickets.Api
+dotnet run
+```
+
+API: http://localhost:5000  
+Swagger UI: http://localhost:5000/swagger
+
+## Running Migrations (once domain entities are added)
+
+```bash
+cd src
+
+# Create migration
+dotnet ef migrations add InitialCreate \
+  --project SupportTickets.Infrastructure \
+  --startup-project SupportTickets.Api
+
+# Apply migration
+dotnet ef database update \
+  --project SupportTickets.Infrastructure \
+  --startup-project SupportTickets.Api
+```
 
 ```bash
 cd backend
