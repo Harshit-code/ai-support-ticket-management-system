@@ -15,7 +15,7 @@
 | GET | /api/tickets/{id} | ✅ | Get ticket with comments |
 | POST | /api/tickets | ✅ | Create ticket |
 | PUT | /api/tickets/{id} | ✅ | Update title, description, priority, assignedTo |
-| PATCH | /api/tickets/{id}/status | 🔜 | Transition status (state machine enforced) |
+| PATCH | /api/tickets/{id}/status | ✅ | Transition status (state machine enforced via InvalidTransitionException) |
 
 ### POST /api/tickets — Request
 ```json

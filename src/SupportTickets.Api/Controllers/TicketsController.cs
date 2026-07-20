@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SupportTickets.Api.DTOs;
 using SupportTickets.Domain.Entities;
+using SupportTickets.Domain.Exceptions;
 using SupportTickets.Domain.Interfaces;
 
 namespace SupportTickets.Api.Controllers;
@@ -59,4 +60,36 @@ public class TicketsController : ControllerBase
         var updated = await _tickets.UpdateAsync(id, ticket);
         return updated is null ? NotFound(new { error = $"Ticket {id} not found." }) : Ok(updated);
     }
+
+    /// <summary>
+    /// Transition a ticket's status. Allowed transitions:
+    /// Open → InProgress | Cancelled,
+    /// InProgress → Resolved | Cancelled,
+    /// Resolved → Closed.
+    /// Closed and Cancelled are terminal states.
+    /// </summary>
+    [HttpPatch("{id:int}/status")]
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] PatchTicketStatusRequest req)
+    {
+        try
+        {
+            var updated = await _tickets.TransitionStatusAsync(id, req.NewStatus);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound(new { error = $"Ticket {id} not found." });
+        }
+        catch (InvalidTransitionException ex)
+        {
+            return BadRequest(new
+            {
+                error   = ex.Message,
+                from    = ex.From.ToString(),
+                to      = ex.To.ToString(),
+                allowed = ex.Allowed.Select(s => s.ToString())
+            });
+        }
+    }
 }
+

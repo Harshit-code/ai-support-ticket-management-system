@@ -52,4 +52,16 @@ public class TicketRepository : ITicketRepository
         await _db.SaveChangesAsync();
         return existing;
     }
+
+    public async Task<Ticket?> UpdateStatusAsync(int id, TicketStatus newStatus)
+    {
+        var existing = await _db.Tickets.FindAsync(id);
+        if (existing is null) return null;
+
+        existing.Status    = newStatus;
+        existing.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+        return existing;
+    }
 }

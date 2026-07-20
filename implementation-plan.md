@@ -36,12 +36,17 @@
 - [x] DI registered in Program.cs
 - [x] Build verified: 0 errors, 0 warnings
 
-## Phase 4 — (next)
-- [ ] PATCH /api/tickets/{id}/status — status transition endpoint (state machine enforced)
-- [ ] Comments API endpoints
-- [ ] Users API endpoints
+## Phase 4 — Status Transition Endpoint ✅
+- [x] `TicketStatusTransitions` static class (Domain/StateMachine) — single map of all allowed transitions
+- [x] `InvalidTransitionException` (Domain/Exceptions) — carries From, To, Allowed fields
+- [x] `ITicketService.TransitionStatusAsync` + `ITicketRepository.UpdateStatusAsync` added to interfaces
+- [x] `TicketService.TransitionStatusAsync` — reads current status, checks map, throws `InvalidTransitionException` on violation
+- [x] `TicketRepository.UpdateStatusAsync` — writes status + UpdatedAt only, zero logic
+- [x] `PatchTicketStatusRequest` DTO with `[EnumDataType]` validation
+- [x] `PATCH /api/tickets/{id}/status` — catches `InvalidTransitionException` and returns 400 with `error`, `from`, `to`, `allowed`
+- [x] Build verified: 0 errors, 0 warnings
 
-## Phase 5 — (future)
+## Phase 5 — (next)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI
