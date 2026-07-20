@@ -22,10 +22,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repositories
-builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<ITicketRepository,  TicketRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 // Services
-builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketService,  TicketService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddSwaggerGen(options =>
 {

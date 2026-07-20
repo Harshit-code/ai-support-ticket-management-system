@@ -48,10 +48,10 @@ Returns `404 Not Found` if the ticket does not exist.
 
 ## Comments
 
-| Method | Route | Description |
-|---|---|---|
-| GET | /api/tickets/{ticketId}/comments | List comments for a ticket |
-| POST | /api/tickets/{ticketId}/comments | Add comment (blocked on terminal tickets) |
+| Method | Route | Status | Description |
+|---|---|---|---|
+| GET | /api/tickets/{ticketId}/comments | ✅ | List all comments for a ticket, ordered oldest first |
+| POST | /api/tickets/{ticketId}/comments | ✅ | Add a comment (404 if ticket not found) |
 
 ### POST /api/tickets/{ticketId}/comments — Request
 ```json
@@ -60,5 +60,6 @@ Returns `404 Not Found` if the ticket does not exist.
   "createdById": 1
 }
 ```
-Returns `400` if ticket is Closed or Cancelled.
-Returns `404` if ticket not found.
+Returns `201 Created` with the saved comment.
+Returns `400 Bad Request` if message is missing or empty.
+Returns `404 Not Found` if the ticket does not exist.
