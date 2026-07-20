@@ -18,14 +18,23 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Repositories
-builder.Services.AddScoped<ITicketRepository, TicketRepository>();
+builder.Services.AddScoped<IUserRepository,    UserRepository>();
+builder.Services.AddScoped<ITicketRepository,  TicketRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 // Services
-builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketService,  TicketService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -49,6 +58,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
+// Apply pending migrations and seed data on every startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -61,6 +77,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseAuthorization();
 app.MapControllers();
 

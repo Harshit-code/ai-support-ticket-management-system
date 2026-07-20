@@ -11,13 +11,21 @@
 
 | Method | Route | Status | Description |
 |---|---|---|---|
-| GET | /api/tickets | ✅ | List all tickets (includes createdBy, assignedTo) |
+| GET | /api/tickets | ✅ | List tickets — optional `?keyword=` (title/description) and `?status=` filters |
 | GET | /api/tickets/{id} | ✅ | Get ticket with comments |
 | POST | /api/tickets | ✅ | Create ticket |
 | PUT | /api/tickets/{id} | ✅ | Update title, description, priority, assignedTo |
 | PATCH | /api/tickets/{id}/status | ✅ | Transition status (state machine enforced via InvalidTransitionException) |
 
-### POST /api/tickets — Request
+### GET /api/tickets — Query Parameters
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `keyword` | string | no | Case-insensitive match against title and description |
+| `status` | TicketStatus | no | Exact match: `Open`, `InProgress`, `Resolved`, `Closed`, `Cancelled` |
+
+Both params are independent and combine with AND when both are provided.
+
+
 ```json
 {
   "title": "string",
@@ -48,10 +56,10 @@ Returns `404 Not Found` if the ticket does not exist.
 
 ## Comments
 
-| Method | Route | Description |
-|---|---|---|
-| GET | /api/tickets/{ticketId}/comments | List comments for a ticket |
-| POST | /api/tickets/{ticketId}/comments | Add comment (blocked on terminal tickets) |
+| Method | Route | Status | Description |
+|---|---|---|---|
+| GET | /api/tickets/{ticketId}/comments | ✅ | List all comments for a ticket, ordered oldest first |
+| POST | /api/tickets/{ticketId}/comments | ✅ | Add a comment (404 if ticket not found) |
 
 ### POST /api/tickets/{ticketId}/comments — Request
 ```json
@@ -60,5 +68,6 @@ Returns `404 Not Found` if the ticket does not exist.
   "createdById": 1
 }
 ```
-Returns `400` if ticket is Closed or Cancelled.
-Returns `404` if ticket not found.
+Returns `201 Created` with the saved comment.
+Returns `400 Bad Request` if message is missing or empty.
+Returns `404 Not Found` if the ticket does not exist.

@@ -12,7 +12,8 @@ public class TicketService : ITicketService
 
     public TicketService(ITicketRepository repo) => _repo = repo;
 
-    public Task<IEnumerable<Ticket>> GetAllAsync() => _repo.GetAllAsync();
+    public Task<IEnumerable<Ticket>> GetAllAsync(string? keyword = null, TicketStatus? status = null)
+        => _repo.GetAllAsync(keyword, status);
 
     public Task<Ticket?> GetByIdAsync(int id) => _repo.GetByIdAsync(id);
 

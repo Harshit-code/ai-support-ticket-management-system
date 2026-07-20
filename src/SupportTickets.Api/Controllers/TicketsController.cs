@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SupportTickets.Api.DTOs;
 using SupportTickets.Domain.Entities;
+using SupportTickets.Domain.Enums;
 using SupportTickets.Domain.Exceptions;
 using SupportTickets.Domain.Interfaces;
 
@@ -16,9 +17,15 @@ public class TicketsController : ControllerBase
 
     public TicketsController(ITicketService tickets) => _tickets = tickets;
 
-    /// <summary>Get all tickets ordered by creation date descending.</summary>
+    /// <summary>
+    /// Get all tickets ordered by creation date descending.
+    /// Optionally filter by keyword (searches title and description) and/or status.
+    /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll() => Ok(await _tickets.GetAllAsync());
+    public async Task<IActionResult> GetAll(
+        [FromQuery] string? keyword,
+        [FromQuery] TicketStatus? status)
+        => Ok(await _tickets.GetAllAsync(keyword, status));
 
     /// <summary>Get a single ticket with its comments.</summary>
     [HttpGet("{id:int}")]

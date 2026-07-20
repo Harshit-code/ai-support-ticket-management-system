@@ -46,7 +46,27 @@
 - [x] `PATCH /api/tickets/{id}/status` — catches `InvalidTransitionException` and returns 400 with `error`, `from`, `to`, `allowed`
 - [x] Build verified: 0 errors, 0 warnings
 
-## Phase 5 — (next)
+## Phase 5 — Comment Endpoints ✅
+- [x] `ICommentRepository` + `ICommentService` interfaces (Domain/Interfaces)
+- [x] `CommentService` (Domain/Services) — validates ticket exists via `ITicketRepository`, throws `KeyNotFoundException` if not
+- [x] `CommentRepository` (Infrastructure/Repositories) — sets `CreatedAt`, orders by `CreatedAt` ascending on reads
+- [x] `CreateCommentRequest` DTO — message required + non-empty (`[Required]`, `[MinLength(1)]`, `[MaxLength(5000)]`)
+- [x] `CommentsController` — `GET /api/tickets/{ticketId}/comments`, `POST /api/tickets/{ticketId}/comments`
+- [x] `KeyNotFoundException` caught in controller → 404 (not 500)
+- [x] Message trimmed before save to prevent whitespace-only comments slipping through
+- [x] `ICommentRepository` + `ICommentService` registered in Program.cs
+- [x] Build verified: 0 errors, 0 warnings
+
+## Phase 6 — Search and Filtering ✅
+- [x] `keyword` query param — case-insensitive `Contains` on title and description (EF Core translates to SQL LIKE)
+- [x] `status` query param — exact enum match; accepts string values (`"InProgress"`) via `JsonStringEnumConverter`
+- [x] Both params are optional and combine with AND when both supplied
+- [x] Interface signatures updated: `GetAllAsync(string? keyword, TicketStatus? status)` on repo and service
+- [x] Conditional query built with `IQueryable` — filters only applied when param is non-null/non-empty
+- [x] Controller uses `[FromQuery]` on existing `GET /api/tickets` — no new endpoint added
+- [x] Build verified: 0 errors, 0 warnings
+
+## Phase 7 — (next)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI
