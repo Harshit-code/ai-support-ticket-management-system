@@ -76,3 +76,24 @@ Note: blocking comments on Closed/Cancelled tickets was in the original design b
 > "Add search and filtering to the ticket list endpoint — keyword search on title and description, status filter. Both as query params. Work together if both provided. Keep it on the existing GET endpoint."
 
 Output: `GetAllAsync(string? keyword, TicketStatus? status)` signature added to `ITicketRepository` and `ITicketService`. Conditional `IQueryable` in `TicketRepository` — `Contains` for keyword (EF Core translates to SQL LIKE, case-insensitive in SQLite), exact enum match for status. Controller `GetAll` action now accepts `[FromQuery] string? keyword` and `[FromQuery] TicketStatus? status`. Both params are optional; omitting both returns all tickets.
+
+---
+
+## Feature: Backend Completion and Sanity Check
+
+**Prompt 13 — Backend README and sanity check**
+> "Backend is complete now. Add the relevant backend README architecture design file, test all the ticket and comment APIs, do a sanity check, then update the relevant md files."
+
+Sanity check output — 4 bugs found and fixed:
+1. `GET /api/tickets/{id}/comments` returned `200 []` for non-existent ticket. Fixed: ticket existence check added to `CommentService.GetByTicketIdAsync`.
+2. `CreateCommentRequest` had `MaxLength(5000)` but `AppDbContext` enforces `HasMaxLength(1000)`. Fixed: aligned DTO to `MaxLength(1000)`.
+3. `UsersController` was missing despite being documented in `api-contract.md`. Fixed: added `IUserRepository`, `UserRepository`, `UsersController` (`GET /api/users`, `GET /api/users/{id}`).
+4. No auto-migration on startup. Fixed: `db.Database.Migrate()` added in `Program.cs`.
+5. No CORS. Fixed: `WithOrigins("http://localhost:5173")` added for frontend dev server.
+
+New files: `src/README.md` (setup + architecture + endpoint list), `test-strategy.md` (27 manual test cases), `test-results.md` (blank table ready to fill), `pr-description.md`, `reflection.md`, `final-ai-usage-summary.md`.
+
+**Prompt 14 — Update remaining ai-prompts files**
+> "Also the ai-prompt relevant md files that also need updating."
+
+Created missing files: `ai-prompts/testing.md`, `ai-prompts/debugging.md`, `ai-prompts/code-review.md`, `ai-prompts/documentation.md`. Updated `ai-prompts/implementation.md` with Prompts 13–14.
