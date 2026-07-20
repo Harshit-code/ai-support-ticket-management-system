@@ -57,7 +57,16 @@
 - [x] `ICommentRepository` + `ICommentService` registered in Program.cs
 - [x] Build verified: 0 errors, 0 warnings
 
-## Phase 6 — (next)
+## Phase 6 — Search and Filtering ✅
+- [x] `keyword` query param — case-insensitive `Contains` on title and description (EF Core translates to SQL LIKE)
+- [x] `status` query param — exact enum match; accepts string values (`"InProgress"`) via `JsonStringEnumConverter`
+- [x] Both params are optional and combine with AND when both supplied
+- [x] Interface signatures updated: `GetAllAsync(string? keyword, TicketStatus? status)` on repo and service
+- [x] Conditional query built with `IQueryable` — filters only applied when param is non-null/non-empty
+- [x] Controller uses `[FromQuery]` on existing `GET /api/tickets` — no new endpoint added
+- [x] Build verified: 0 errors, 0 warnings
+
+## Phase 7 — (next)
 - [ ] Frontend ticket list and detail views
 - [ ] Status transition UI
 - [ ] Comment thread UI

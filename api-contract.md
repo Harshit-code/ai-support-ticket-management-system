@@ -11,13 +11,21 @@
 
 | Method | Route | Status | Description |
 |---|---|---|---|
-| GET | /api/tickets | ✅ | List all tickets (includes createdBy, assignedTo) |
+| GET | /api/tickets | ✅ | List tickets — optional `?keyword=` (title/description) and `?status=` filters |
 | GET | /api/tickets/{id} | ✅ | Get ticket with comments |
 | POST | /api/tickets | ✅ | Create ticket |
 | PUT | /api/tickets/{id} | ✅ | Update title, description, priority, assignedTo |
 | PATCH | /api/tickets/{id}/status | ✅ | Transition status (state machine enforced via InvalidTransitionException) |
 
-### POST /api/tickets — Request
+### GET /api/tickets — Query Parameters
+| Param | Type | Required | Description |
+|---|---|---|---|
+| `keyword` | string | no | Case-insensitive match against title and description |
+| `status` | TicketStatus | no | Exact match: `Open`, `InProgress`, `Resolved`, `Closed`, `Cancelled` |
+
+Both params are independent and combine with AND when both are provided.
+
+
 ```json
 {
   "title": "string",

@@ -12,13 +12,24 @@ public class TicketRepository : ITicketRepository
 
     public TicketRepository(AppDbContext db) => _db = db;
 
-    public async Task<IEnumerable<Ticket>> GetAllAsync()
-        => await _db.Tickets
+    public async Task<IEnumerable<Ticket>> GetAllAsync(string? keyword = null, TicketStatus? status = null)
+    {
+        var query = _db.Tickets
             .AsNoTracking()
             .Include(t => t.CreatedBy)
             .Include(t => t.AssignedTo)
-            .OrderByDescending(t => t.CreatedAt)
-            .ToListAsync();
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(keyword))
+            query = query.Where(t =>
+                t.Title.Contains(keyword) ||
+                t.Description.Contains(keyword));
+
+        if (status.HasValue)
+            query = query.Where(t => t.Status == status.Value);
+
+        return await query.OrderByDescending(t => t.CreatedAt).ToListAsync();
+    }
 
     public async Task<Ticket?> GetByIdAsync(int id)
         => await _db.Tickets
