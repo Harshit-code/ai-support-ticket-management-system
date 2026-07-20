@@ -82,7 +82,7 @@ public class TicketsController : ControllerBase
         }
         catch (InvalidTransitionException ex)
         {
-            return BadRequest(new
+            return Conflict(new
             {
                 error   = ex.Message,
                 from    = ex.From.ToString(),
